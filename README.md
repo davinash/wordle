@@ -1,2 +1,2 @@
 # wordle
-simple world in golang
+simple worlde in golang
