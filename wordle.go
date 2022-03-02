@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"github.com/fatih/color"
 	"os"
@@ -38,7 +39,13 @@ type Pair struct {
 }
 
 func main() {
-	dictFile, err := os.Open("/usr/share/dict/words")
+	dictionaryFile := flag.String("dict-file", "/usr/share/dict/words", "Dictionary file with words seperated by newline")
+	wordLen := flag.Int("word-len", 5, "Minimum length of the word")
+	attempt := flag.Int("attempt", 6, "Number of attempts")
+
+	flag.Parse()
+
+	dictFile, err := os.Open(*dictionaryFile)
 	if err != nil {
 		fmt.Println("error opening file ", err)
 		os.Exit(1)
@@ -56,24 +63,25 @@ func main() {
 	scanner := bufio.NewScanner(dictFile)
 	for scanner.Scan() {
 		word := strings.ToUpper(scanner.Text())
-		if len(word) == 5 && IsAlphaOnly(word) {
+		if len(word) == *wordLen && IsAlphaOnly(word) {
 			wordsMap[word] = true
 		}
 	}
 	var pWord string
 	for pWord = range wordsMap {
 	}
+	fmt.Println("Word Chosen --> ", pWord)
 	matchCount := 0
-	for tryIdx := 0; tryIdx < 6; tryIdx++ {
+	for tryIdx := 0; tryIdx < *attempt; tryIdx++ {
 		var w string
 		scanf("%s\n", &w)
 		w = strings.ToUpper(w)
-		if len(w) != 5 {
-			fmt.Println("Length should be 5 !!")
+		if len(w) != *wordLen {
+			fmt.Printf("Length should be %d !!\n", *wordLen)
 			continue
 		}
-		result := make([]Pair, 5)
-		for idx := 0; idx < 5; idx++ {
+		result := make([]Pair, *wordLen)
+		for idx := 0; idx < *wordLen; idx++ {
 			if pWord[idx] == w[idx] {
 				result[idx] = Pair{ch: string(w[idx]), color: GREEN}
 				matchCount++
